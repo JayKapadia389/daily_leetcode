@@ -10,7 +10,7 @@ public:
         int s = nums1.size() ;
 
         if(s%2 == 0){
-            med = static_cast<float>(nums1[s/2] + nums1[(s/2) -1])/2 ;
+            med = static_`cast<float>(nums1[s/2] + nums1[(s/2) -1])/2 ;
         }
         else{
             med = nums1[(s-1)/2] ;
