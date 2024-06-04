@@ -1,51 +1,63 @@
 class Solution {
 public:
+    int _n;
 
-    void core(int n , vector<string> board , vector<vector<string>> &ans , int i , int j){
-
-        if(!isValid()){
-            return ;
+    bool isValid(vector<string>& board, int row, int col) {
+        // Check the column
+        for (int i = 0; i < row; i++) {
+            if (board[i][col] == 'Q') {
+                return false;
+            }
         }
 
-        int y ;
-
-        for(int x = i ; x < n ;x++){
-
-            if(x == i){
-                y = j+1 ;
+        // Check the upper left diagonal
+        for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {
+            if (board[i][j] == 'Q') {
+                return false;
             }
-            else{
-                y = 0 ;
-            }
+        }
 
-            for( ; y < n ;y++){
-                
-                core(n-1 , , ans , x , y) ;
+        // Check the upper right diagonal
+        for (int i = row - 1, j = col + 1; i >= 0 && j < _n; i--, j++) {
+            if (board[i][j] == 'Q') {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    void core(int n , int row, vector<string> board, vector<vector<string>>& ans) {
+        if (row == _n) {
+            ans.push_back(board);
+            return;
+        }
+
+        for (int col = 0; col < _n; col++) {
+            if (isValid(board, row, col)) {
+                vector<string> newBoard = board ;
+                newBoard[row][col] = 'Q';
+                if(n==1){
+                    ans.push_back(newBoard) ;
+                    return ;
+                }
+                else{
+                    core(n-1 , row + 1, newBoard, ans);
+                }
+                // No need to backtrack as board is passed by value
             }
         }
 
         return ;
-
     }
 
     vector<vector<string>> solveNQueens(int n) {
+        vector<vector<string>> ans;
+        vector<string> board(n, string(n, '.'));
+        _n = n;
 
-        vector<vector<string>> ans ;
-        string s = "";
+        core(n , 0, board, ans);
 
-        for(int i =0 ; i< n ;i++){
-            s+="." ;
-        } 
-
-        vector<string> board ;
-
-        for(int i =0 ; i< n ;i++){
-            board.push_back(s) ;
-        }
-
-        core(n , board , ans , 0 , 0) ;
-
-        return ans ;
-
+        return ans;
     }
 };
