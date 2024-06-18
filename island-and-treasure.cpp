@@ -36,8 +36,9 @@ public:
                 int newX = p.first+dir[i][0] ;
                 int newY = p.second+dir[i][1] ;
 
-                if(grid[newX][newY] == INF){
-                    grid[newX][newY] == (grid[p.first][p.second] + 1) ;
+                if(newX >= 0 && newX < m && newY >= 0 && newY <n &&
+                grid[newX][newY] == INF){
+                    grid[newX][newY] = (grid[p.first][p.second] + 1) ;
                     q.push({newX , newY}) ;
                 }
 
