@@ -1,89 +1,46 @@
 class Solution {
 public:
-
-    int first , second ;
-    vector<int> cycle ;
-
-    void recc(vector<bool> &edgeVis_ , vector<bool>&visited_ ,stack<int> &st ,vector<vector<int>>& edges , int &n ,int curr ){
-
-        for(int i = 0 ; i < n ; i++){
-            if((edges[i][0] == curr || edges[i][1] == curr) && edgeVis[i] != 1 ){
-                int x = (edges[i][0] == curr) ? edges[i][1] : edges[i][0] ;
-
-                if(x == second){
-                    //fill ds
-                    while(!st.empty()){
-                        cycle.push_back(st.top()) ;
-                        st.pop() ;
-                    }
-
-                    return ;
-                }
-                edgeVis_[i] = 1 ;
-                st.push(x) ;
-                dfs(x) ;
-                
-            }
-        }
-
-        if(!st.empty())
-        st.pop() ;
-
-        return ;
-
-    }
-
     vector<int> findRedundantConnection(vector<vector<int>>& edges) {
 
         int n = edges.size() ;
-        vector<bool> edgeVis(n , 0) ;
-        vector<bool> visited(n+1, 0) ;
-        
 
-        queue<int> q ;
+        vector<int> rank(n+1 , 1) ;
+        vector<int> par(n+1) ;
+        vector<int> ans(2) ;
 
-        q.push(1) ;
-        visited[1] = 1 ;
-        bool found = 0 ;
-
-        vector<bool> edgeVis_(n , 0) ;
-        vector<bool> visited_(n+1, 0) ;
-        stack<int> st ;
-
-        while(!found && !q.empty()){
-            int curr = q.front() ;
-            q.pop() ;
-
-            for(int i = 0 ; i< n ; i++){
-                if((edges[i][0] == curr || edges[i][1] == curr) && edgeVis[i] != 1 ){
-                    int x = (edges[i][0] == curr) ? edges[i][1] : edges[i][0] ;
-
-                    if(visited[x]){
-
-                        first = curr ;
-                        second = x ;
-                        found = 1;
-                        edgeVis_[i] = 1; 
-                        break ;
-
-                    }
-                    else{
-
-                        edgeVis[i] = 1;
-                        visited[x] = 1;
-                        q.push(x) ;
-
-                    }
-                }
-            }
+        for(int i = 1 ; i <= n ; i++){
+            par[i] = i ;
         }
 
-        st.push(first) ;
+        for(int i = 0 ; i < n ; i++){
 
-        recc(edgeVis_ , visited_ , st , edges , n , first) ;
+            int par1 = par[edges[i][0]] ;
+            int par2 = par[edges[i][1]];
 
-        //
+
+            if( par1 == par2 ){
+                 ans[0] = edges[i][0] ;
+                 ans[1] = edges[i][1] ; 
+                 return ans ;
+           }
+
+           if(rank[par1] < rank[par2]){
+            int temp = par1 ;
+            par1 = par2 ;
+            par2 = temp ;
+           }
+
+           for(int i = 1 ; i <= n ; i++){
+            if(par[i] == par2){
+                par[i] = par1 ;
+            }
+           }
+
+           rank[par1] = rank[par1] + rank[par2] ;
 
 
+        }
+
+        return ans ;
     }
 };
