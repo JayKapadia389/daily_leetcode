@@ -100,7 +100,16 @@ public:
 
         }
 
-        return true ;
+        while(q.front() != NULL){
+            temp = q.front() ;
+            q.pop();
+
+            if(temp->eow){
+                return true ;
+            }
+        }
+
+        return false ;
         
     }
 };
