@@ -1,4 +1,5 @@
 
+//solution is correct but time limit exceeds
 
 class Node{
 
@@ -26,6 +27,8 @@ class Trie{
         Node * temp = root ;
         int idx ;
 
+        cout << endl ;
+
         for(int i = 0 ; i < word.length() ; i++){
 
             idx = word[i] - 'a' ;
@@ -33,6 +36,8 @@ class Trie{
             if((temp->children)[idx] == NULL){
                 return false ;
             }
+
+            cout << word[i] ;
 
             temp = (temp->children)[idx] ;
 
@@ -46,13 +51,11 @@ class Trie{
 class Solution {
 public:
 
-    Trie myTrie() ;
+    Trie myTrie ;
     vector<vector<int>> visited ;
     vector<vector<char>>_board ;
-
     vector<vector<int>> dir ;
 
-    vector<int> pair(2) ;
 
     int _m ,_n ;
 
@@ -66,26 +69,8 @@ public:
         return false ;
     }
 
-    Solution(){
-
-        vector<int> inner;
-
-        inner[0] = -1;
-        inner[1] = 0;
-        dir.push_back(inner);
-
-        inner[0] = 0;
-        inner[1] = 1;
-        dir.push_back(inner);
-
-        inner[0] = 1;
-        inner[1] = 0;
-        dir.push_back(inner);
-
-        inner[0] = 0;
-        inner[1] = -1;
-        dir.push_back(inner);
-
+    Solution() {
+        dir = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
     }
 
     void recc(Node * curr , int i , int j ){
@@ -98,7 +83,7 @@ public:
             int newY = j + dir[x][1] ;
 
             if(!(newX < 0 || newX == _m || newY < 0 || newY == _n
-            || inVec(i,j))){
+            || inVec(newX,newY))){
 
                 idx = _board[newX][newY] - 'a' ;
 
@@ -106,10 +91,7 @@ public:
                     (curr->children)[idx] = new Node() ;
                 }
 
-                pair[0] = newX;
-                pair[1] = newY;
-
-                visited.push_back(pair) ;
+                visited.push_back({newX, newY}) ;
 
                 recc((curr->children)[idx] , newX , newY) ;
 
@@ -131,9 +113,7 @@ public:
         _m = m;
         _n = n ;
 
-        for(int i =0 ; i< m ; i++){
-            _board.push_back(board[i]) ;
-        }
+        _board = board;
 
         int idx ;
 
@@ -146,7 +126,7 @@ public:
                     ((myTrie.root)->children)[idx] = new Node() ;
                 }
 
-                visited.push_back([i,j]) ;
+                visited.push_back({i,j}) ;
 
                 recc(((myTrie.root)->children)[idx] , i , j) ;
 
