@@ -10,66 +10,41 @@ public:
 
         } 
 
-        priority_queue<pair<int , char>> pq ;
+        priority_queue<int> pq ;
 
         for(auto i : freq){
 
-            pq.push({i.second , i.first}) ;
+            pq.push(i.second) ;
 
         }
 
-        map<char , int> cooldown ;
-        vector<pair<int , char>> temp_vec ;
-        int clock = 0 ;
+        int time = 0 ;
 
-        while(!pq.empty()){
+        queue<pair<int , int >> q ;
 
-            while((cooldown[(pq.top()).second]) != 0 && (!pq.empty())){
-                // push 
-                temp_vec.push_back(pq.top()) ;
+        while(!pq.empty() || !q.empty()){
 
-                pq.pop() ;
-            }
+            cout << "1" <<endl ;
 
             if(!pq.empty()){
-                pair<int , char > p = pq.top() ;
+                int x = pq.top() ;
                 pq.pop() ;
 
-                p.first = (p.first) -1 ;
-
-                //sub ->if 0 dont push in pq
-                if((p.first) != 0){
-                    pq.push(p) ;
-                } 
-
-                cooldown[p.second] = n ;
-
-                for(auto i : cooldown){
-
-                    if(i.first != p.second){
-                        (i.second)-- ;
-                    }
-
+                if(x != 1){
+                    q.push( { --x , time+ n + 1}) ;
                 }
-
-
-
-
             }
 
-            clock++ ;
+            time++ ;
 
-            for(auto i : temp_vec){
-                pq.push(i) ;
+            if(!q.empty() && q.front().second == time){
+                pq.push(q.front().first) ;
+                q.pop() ;
             }
 
         }
 
-
-        return clock ;
-        
-
-
+            return time ;    
         
     }
 };
