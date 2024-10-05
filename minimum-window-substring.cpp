@@ -1,50 +1,74 @@
 class Solution {
 public:
-
-    bool fun(int f ,int l ,string s ,map<char,int> m1){
-
-        map<char, int> m2 ;
-
-         for(int i = f ; i <= l ; i++){
-            m2[s[i]]++ ;
-        }
-
-        for(auto i : m1){
-            if(m2[i.first] < i.second){
-                return false ;
-            }
-        }
-
-        return true ;
-    }
-
     string minWindow(string s, string t) {
 
-        int m = s.length() , n = t.length() ;
+        int minLen = INT_MAX ;
+        string ans = "" ;
 
-        if(m < n){
+        map<char , int> constFreq ;
+        for(int i = 0 ; i < t.length() ; i++){
+
+            constFreq[t[i]]++ ;
+
+        }
+
+        map<char , int> varFreq ;
+
+        int j = 0 ;
+
+        while(j < s.length()){
+
+            varFreq[s[j]]++ ;
+
+            if(constFreq[s[j]]){
+
+                bool b = 0 ;
+
+                for(auto y : varFreq){
+                    if(constFreq[y.first] > y.second){
+                        b = 1 ;
+                        break ;
+                    }
+                }
+
+                if(b == 0){
+                    break ;
+                }
+
+            }
+
+            j++ ;
+            
+
+        }
+
+        if(j >= s.length()){
             return "" ;
         }
 
-        map<char , int > m1 ;
+        int i = 0 ;
 
-        for(int i = 0 ; i < n ; i++){
-            m1[t[i]]++ ;
-        }
+        bool shrink = 1 ;
 
-        for(int len = n ; len <= m ;len++ ){
+        while(j<n){
 
-            for(int f = 0 , l = len -1 ; l < m ;f++ , l++){
+            if(shrink){
 
-                if(fun(f , l , s , m1)){
-                    return s.substr(f , len) ;
+                if(minLen > (j - i + 1)){
+                    minLen = (j - i + 1) ;
+                    ans = s.substr(i , j - i + 1) ;
                 }
+
                 
+
+            }
+            else{
+
             }
 
         }
 
-        return "" ;
-        
+        return ans ;
+
     }
-};
+};  
