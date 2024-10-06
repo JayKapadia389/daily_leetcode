@@ -1,74 +1,48 @@
 class Solution {
 public:
     string minWindow(string s, string t) {
-
-        int minLen = INT_MAX ;
-        string ans = "" ;
-
-        map<char , int> constFreq ;
-        for(int i = 0 ; i < t.length() ; i++){
-
-            constFreq[t[i]]++ ;
-
+        if (t.empty() || s.empty()) return "";
+        
+        unordered_map<char, int> constFreq;
+        for (char c : t) {
+            constFreq[c]++;
         }
 
-        map<char , int> varFreq ;
+        unordered_map<char, int> varFreq;
+        int required = constFreq.size(); 
+        int formed = 0; 
 
-        int j = 0 ;
+        int left = 0, right = 0;
+        int minLen = INT_MAX;
+        int start = 0;
 
-        while(j < s.length()){
+        while (right < s.size()) {
+            char c = s[right];
+            varFreq[c]++;
 
-            varFreq[s[j]]++ ;
-
-            if(constFreq[s[j]]){
-
-                bool b = 0 ;
-
-                for(auto y : varFreq){
-                    if(constFreq[y.first] > y.second){
-                        b = 1 ;
-                        break ;
-                    }
-                }
-
-                if(b == 0){
-                    break ;
-                }
-
+            if (constFreq.count(c) && varFreq[c] == constFreq[c]) {
+                formed++;
             }
 
-            j++ ;
-            
+            while (left <= right && formed == required) {
+                char startChar = s[left];
 
-        }
-
-        if(j >= s.length()){
-            return "" ;
-        }
-
-        int i = 0 ;
-
-        bool shrink = 1 ;
-
-        while(j<n){
-
-            if(shrink){
-
-                if(minLen > (j - i + 1)){
-                    minLen = (j - i + 1) ;
-                    ans = s.substr(i , j - i + 1) ;
+                if ((right - left + 1) < minLen) {
+                    minLen = right - left + 1;
+                    start = left;
                 }
 
-                
+                varFreq[startChar]--;
+                if (constFreq.count(startChar) && varFreq[startChar] < constFreq[startChar]) {
+                    formed--;
+                }
 
+                left++;
             }
-            else{
 
-            }
-
+            right++;
         }
 
-        return ans ;
-
+        return minLen == INT_MAX ? "" : s.substr(start, minLen);
     }
-};  
+};
