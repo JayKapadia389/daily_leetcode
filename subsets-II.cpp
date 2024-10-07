@@ -1,40 +1,52 @@
 class Solution {
 public:
 
-    // boolean unq(vector<int> temp , vector<vector<int>> ans){
+    map<int , int> freq ;
+    vector<vector<int>> ans ;
 
-    // }
+    void fun( map<int,int>::iterator it , int n , vector<int> vec){
 
-    void core(vector<int> nums , int i , vector<int> temp , vector<vector<int>> &ans){
+        for(int i = 1 ; i <= n ; i++ ){
+            vec.push_back(it->first) ;
+        }
 
-        if(i == nums.size()){
-
-            vector<vector<int>>::iterator it = find(ans.begin() , ans.end() , temp);
-
-            if(it == ans.end()){
-                ans.push_back(temp) ;
-            }
+        it++;
+        if(it == freq.end()){
+            ans.push_back(vec) ;
             return ;
         }
 
-        core(nums , i+1 , temp , ans) ;
-
-        temp.push_back(nums[i]) ;
-
-        core(nums , i+1 , temp , ans) ;
+        for(int i = 0 ; i <= (it->second) ; i++){
+            fun(it , i , vec) ;
+        }
 
         return ;
-
     }
 
     vector<vector<int>> subsetsWithDup(vector<int>& nums) {
 
-        vector<int> temp ;
-        vector<vector<int>> ans ;
+        freq.clear() ;
+        ans.clear() ; 
 
-        core(nums , 0 , temp , ans) ;
+        if(nums.size() == 0){
+            return ans ;
+        }
+
+        sort( nums.begin() , nums.end()) ;
+
+        for(int i = 0 ; i < nums.size() ; i++){
+            freq[nums[i]]++ ;
+        }
+
+        auto it = freq.begin() ;
+
+        vector<int> v ;
+
+        for(int i = 0 ; i <= it->second ; i++){
+            fun(it , i , v) ;
+        }
 
         return ans ;
-
+        
     }
 };

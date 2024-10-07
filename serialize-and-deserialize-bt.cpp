@@ -12,9 +12,13 @@ public:
 
     // Encodes a tree to a single string.
 
+    string str = "" ;
+
     string serialize(TreeNode* root) {
 
-        static str = "" ;
+        if(str != "" && str[str.length() -1 ] == ')'){
+            str = "" ;
+        }
 
         if(root == NULL){
             return str;
@@ -32,18 +36,60 @@ public:
         
     }
 
-    // Decodes your encoded data to tree.
-    TreeNode* deserialize(string data) {
+    string data_ ;
 
-        static i = 0 ;
+    TreeNode * deserializeCore(){
 
-        if(data[i] == ')'){
+        static int i = 0 ;
+
+        if(data_ == ""){
             return NULL ;
         }
 
-        
+        if(data_[i] == ')'){
+            return NULL ;
+        }
 
-        
+        int j = i+1 ;
+        int c = 1 ;
+        while(true){
+            if(data_[j] != '('){
+                c++ ;
+                j++ ;
+            }
+            else{
+                break ;
+            }
+        }
+
+        int num = stoi(data_.substr(i , c)) ;
+
+        TreeNode * temp = new TreeNode(num) ;
+
+        i = j+1 ;
+
+        temp->left = deserializeCore() ;
+
+        i+=2 ;
+
+        temp->right = deserializeCore() ;
+
+        i+=1 ;
+
+        if(i == (data_.length())){
+            i = 0 ;
+        }
+
+        return temp ;
+
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data ) {
+
+        data_ = data ;
+
+        return deserializeCore() ;
         
     }
 };
