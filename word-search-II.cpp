@@ -1,15 +1,17 @@
 
-//solution is correct but time limit exceeds
 
 class Node{
 
     public : 
     Node * children[26] ;
+    bool eow ;
 
     Node(){
         for(int i = 0 ; i< 26 ; i++){
             children[i] = NULL ;
         }
+
+        eow = false ;
     }
 };
 
@@ -22,29 +24,47 @@ class Trie{
         root = new Node() ;
     }
 
-    bool search(string word){
+    void insert(string word) {
 
-        Node * temp = root ;
+        Node * temp = root;
         int idx ;
 
-        cout << endl ;
+        for(int i =0 ; i < word.length() ; i++){
 
-        for(int i = 0 ; i < word.length() ; i++){
+            int idx = word[i] - 'a' ;
 
-            idx = word[i] - 'a' ;
+            if((temp->children)[idx] == NULL){
+                (temp->children)[idx] = new Node() ;
+            }
+
+            temp = (temp->children)[idx] ;
+        }
+
+        temp->eow = true ;
+
+        return ;
+        
+    }
+    
+    bool startsWith(string prefix) {
+
+        Node * temp = root;
+        int idx ;
+
+        for(int i = 0 ; i < prefix.length() ; i++){
+
+            idx = prefix[i] - 'a' ;
 
             if((temp->children)[idx] == NULL){
                 return false ;
             }
-
-            cout << word[i] ;
 
             temp = (temp->children)[idx] ;
 
         }
 
         return true ;
-
+        
     }
 };
 
