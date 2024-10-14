@@ -1,167 +1,139 @@
-
-
-class Node{
-
-    public : 
-    Node * children[26] ;
-    bool eow ;
-
-    Node(){
-        for(int i = 0 ; i< 26 ; i++){
-            children[i] = NULL ;
-        }
-
-        eow = false ;
-    }
-};
-
-class Trie{
-
-    public : 
-    Node * root ;
-
-    Trie(){
-        root = new Node() ;
-    }
-
-    void insert(string word) {
-
-        Node * temp = root;
-        int idx ;
-
-        for(int i =0 ; i < word.length() ; i++){
-
-            int idx = word[i] - 'a' ;
-
-            if((temp->children)[idx] == NULL){
-                (temp->children)[idx] = new Node() ;
-            }
-
-            temp = (temp->children)[idx] ;
-        }
-
-        temp->eow = true ;
-
-        return ;
-        
-    }
-    
-    bool startsWith(string prefix) {
-
-        Node * temp = root;
-        int idx ;
-
-        for(int i = 0 ; i < prefix.length() ; i++){
-
-            idx = prefix[i] - 'a' ;
-
-            if((temp->children)[idx] == NULL){
-                return false ;
-            }
-
-            temp = (temp->children)[idx] ;
-
-        }
-
-        return true ;
-        
-    }
-};
-
 class Solution {
 public:
 
-    Trie myTrie ;
-    vector<vector<int>> visited ;
-    vector<vector<char>>_board ;
-    vector<vector<int>> dir ;
+    class TrieNode{
+        public :
+        TrieNode * arr[26] ;
 
-
-    int _m ,_n ;
-
-    bool inVec(int i , int j){
-        for(int x = 0 ; x < visited.size() ; x++){
-            if(visited[x][0] == i && visited[x][1] == j){
-                return true ;
+        TrieNode(){
+            for(int i =0 ; i< 26 ; i++){
+                arr[i] = NULL ;
             }
         }
+    };
 
-        return false ;
-    }
+    class Trie{
+        public :
 
-    Solution() {
-        dir = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
-    }
+        TrieNode * root ;
 
-    void recc(Node * curr , int i , int j ){
+        bool search(string s){
 
-        int idx;
+            TrieNode * curr = root;
+            int idx ;
+            int i = 0 ;
 
-        for(int x = 0 ; x < 4 ; x++){
+            while(true){
 
-            int newX = i + dir[x][0] ;
-            int newY = j + dir[x][1] ;
+                idx = s[i] - 'a' ;
 
-            if(!(newX < 0 || newX == _m || newY < 0 || newY == _n
-            || inVec(newX,newY))){
-
-                idx = _board[newX][newY] - 'a' ;
-
-                if((curr->children)[idx] == NULL){
-                    (curr->children)[idx] = new Node() ;
+                if(!(curr->arr)[idx]){
+                    return  false ;
                 }
 
-                visited.push_back({newX, newY}) ;
+                if(i == (s.length() - 1)){
+                    return true ;
+                }
 
-                recc((curr->children)[idx] , newX , newY) ;
+                curr = (curr->arr)[idx] ; 
+                i++ ;
+
+            }
+
+            return false  ;
+            
+        }
+
+        Trie(){
+            root = new TrieNode() ;
+        }
+    };
+
+    //visted dec
+    vector<vector<bool>> visited_ ;
+    //dir
+    vector<vector<int>> dir_ = {
+        {0,-1},
+        {1,0},
+        {0,1},
+        {-1,0},
+    };
+    //m n
+    int m , n ;
+    //board
+
+    void recc(TrieNode * curr , int x , int y , vector<vector<char>>& board){
+
+        visited_[x][y] = 1 ;
+
+        for(int i = 0 ; i< 4 ; i++){
+
+            int newX = x + dir_[i][0];
+            int newY = y + dir_[i][1];
+
+            if(
+                !(
+                    ((newX < 0 )||(newX >= m )) || ((newY < 0 )||(newY >= n ))
+                )
+                &&
+                !visited_[newX][newY]
+            ){
+
+                TrieNode * newNode = new TrieNode() ;
+
+                int idx = board[newX][newY] - 'a';
+
+                (curr->arr)[idx] = newNode ;
+
+                recc(newNode , newX , newY , board) ;
 
             }
 
         }
 
-        visited.pop_back() ;
+        visited_[x][y] = 0 ;
 
         return ;
-
     }
 
     vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
 
-        int m = board.size() ;
-        int n = board[0].size() ;
+        m = board.size() ;
+        n = board[0].size() ;
 
-        _m = m;
-        _n = n ;
+        vector<vector<bool>> visited(12, vector<bool>(12)) ;
+        visited_ = visited ;
 
-        _board = board;
-
-        int idx ;
+        Trie myTrie ;
+        TrieNode * root = myTrie.root ;
 
         for(int i = 0 ; i < m ; i++){
-            for(int j = 0 ; j < n ; j++){
+            for(int j =0 ; j < n ; j++){
 
-                idx = board[i][j] - 'a' ;
+                int idx = board[i][j] - 'a' ;
 
-                if(((myTrie.root)->children)[idx] == NULL){
-                    ((myTrie.root)->children)[idx] = new Node() ;
+                if((root->arr)[idx] == NULL){
+                    (root->arr)[idx] = new TrieNode() ;
                 }
 
-                visited.push_back({i,j}) ;
-
-                recc(((myTrie.root)->children)[idx] , i , j) ;
+                recc((root->arr)[idx] , i , j , board) ;
 
             }
         }
 
-        vector<string> ans ;
+        vector<string> ansVec ;
 
-        for(int i = 0 ; i< words.size() ; i++){
+        for(int i =0 ; i < words.size() ; i++){
+
             if(myTrie.search(words[i])){
-                ans.push_back(words[i]);
+                ansVec.push_back(words[i]) ;
             }
+
         }
 
-        return ans ;
+        return ansVec ;
 
+
+        
     }
 };
