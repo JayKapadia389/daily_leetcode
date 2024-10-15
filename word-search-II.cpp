@@ -4,11 +4,14 @@ public:
     class TrieNode{
         public :
         TrieNode * arr[26] ;
+        bool eow ;
 
         TrieNode(){
             for(int i =0 ; i< 26 ; i++){
                 arr[i] = NULL ;
             }
+
+            eow = false ;
         }
     };
 
@@ -17,31 +20,29 @@ public:
 
         TrieNode * root ;
 
-        bool search(string s){
+        void insert(string s){
 
-            TrieNode * curr = root;
-            int idx ;
+            int idx ; 
             int i = 0 ;
+            TrieNode * curr = root;
 
             while(true){
 
                 idx = s[i] - 'a' ;
 
-                if(!(curr->arr)[idx]){
-                    return  false ;
+                if((curr->arr)[idx] == NULL){
+                    (curr->arr)[idx] = new TrieNode() ;
                 }
 
-                if(i == (s.length() - 1)){
-                    return true ;
-                }
-
-                curr = (curr->arr)[idx] ; 
+                curr = (curr->arr)[idx] ;
                 i++ ;
 
+                if(i == s.length()){
+                    curr->eow = true ;
+                    return ;
+                }
             }
 
-            return false  ;
-            
         }
 
         Trie(){
@@ -49,22 +50,28 @@ public:
         }
     };
 
-    //visted dec
     vector<vector<bool>> visited_ ;
-    //dir
     vector<vector<int>> dir_ = {
         {0,-1},
         {1,0},
         {0,1},
         {-1,0},
     };
-    //m n
-    int m , n ;
-    //board
+    int m_ , n_ ;
+    vector<string> ansVec_ ;
 
-    void recc(TrieNode * curr , int x , int y , vector<vector<char>>& board){
+    void recc(TrieNode * curr , int x , int y , vector<vector<char>>& board , string str){
 
         visited_[x][y] = 1 ;
+
+        str+= board[x][y] ;
+
+        if(curr->eow){
+            int cnt = count(ansVec_.begin(), ansVec_.end(), str);
+
+            if (cnt == 0)
+            ansVec_.push_back(str) ;
+        }
 
         for(int i = 0 ; i< 4 ; i++){
 
@@ -73,19 +80,17 @@ public:
 
             if(
                 !(
-                    ((newX < 0 )||(newX >= m )) || ((newY < 0 )||(newY >= n ))
+                    ((newX < 0 )||(newX >= m_ )) || ((newY < 0 )||(newY >= n_ ))
                 )
                 &&
                 !visited_[newX][newY]
             ){
 
-                TrieNode * newNode = new TrieNode() ;
-
                 int idx = board[newX][newY] - 'a';
 
-                (curr->arr)[idx] = newNode ;
-
-                recc(newNode , newX , newY , board) ;
+                if((curr->arr)[idx]){
+                    recc((curr->arr)[idx] , newX , newY , board , str) ;
+                }
 
             }
 
@@ -98,42 +103,32 @@ public:
 
     vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
 
-        m = board.size() ;
-        n = board[0].size() ;
-
-        vector<vector<bool>> visited(12, vector<bool>(12)) ;
-        visited_ = visited ;
-
         Trie myTrie ;
         TrieNode * root = myTrie.root ;
 
-        for(int i = 0 ; i < m ; i++){
-            for(int j =0 ; j < n ; j++){
+        for(auto i : words){
+            myTrie.insert(i) ;
+        }
+
+        m_ = board.size() ;
+        n_ = board[0].size() ;
+
+        vector<vector<bool>> visited(12, vector<bool>(12)) ;
+        visited_ = visited ;
+        ansVec_.clear() ;
+
+        for(int i = 0 ; i < m_ ; i++){
+            for(int j =0 ; j < n_ ; j++){
 
                 int idx = board[i][j] - 'a' ;
 
-                if((root->arr)[idx] == NULL){
-                    (root->arr)[idx] = new TrieNode() ;
+                if((root->arr)[idx]){
+                    recc((root->arr)[idx] , i , j , board, "") ;
                 }
-
-                recc((root->arr)[idx] , i , j , board) ;
-
             }
         }
 
-        vector<string> ansVec ;
-
-        for(int i =0 ; i < words.size() ; i++){
-
-            if(myTrie.search(words[i])){
-                ansVec.push_back(words[i]) ;
-            }
-
-        }
-
-        return ansVec ;
-
-
-        
+        return ansVec_ ;
+ 
     }
 };
