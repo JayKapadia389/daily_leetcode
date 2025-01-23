@@ -1,64 +1,64 @@
 class Solution {
 public:
-    vector<vector<int>> highestPeak(vector<vector<int>>& isWater) {
-        int dx[4] = { 0, 0, 1,
-                     -1 };  // Horizontal movement: right, left, down, up
-        int dy[4] = { 1, -1, 0, 0 };  // Vertical movement corresponding to dx
 
-        int rows = isWater.size();
-        int columns = isWater[0].size();
+    int m_, n_;
 
-        // Initialize the height matrix with -1 (unprocessed cells)
-        vector<vector<int>> cellHeights(rows, vector<int>(columns, -1));
+    bool isValid(int X, int Y) {
+        if (X < 0 || X >= m_ || Y < 0 || Y >= n_)
+            return false;
 
-        queue<pair<int, int>> cellQueue;
-
-        // Add all water cells to the queue and set their height to 0
-        for (int x = 0; x < rows; x++) {
-            for (int y = 0; y < columns; y++) {
-                if (isWater[x][y]) {
-                    cellQueue.push({ x, y });
-                    cellHeights[x][y] = 0;
-                }
-            }
-        }
-
-        // Initial height for land cells adjacent to water
-        int heightOfNextLayer = 1;
-
-        while (!cellQueue.empty()) {
-            int layerSize = cellQueue.size();
-
-            // Iterate through all cells in the current layer
-            for (int i = 0; i < layerSize; i++) {
-                pair<int, int> currentCell = cellQueue.front();
-                cellQueue.pop();
-
-                // Check all four possible directions for neighboring cells
-                for (int d = 0; d < 4; d++) {
-                    pair<int, int> neighborCell = { currentCell.first + dx[d],
-                                                   currentCell.second + dy[d] };
-
-                    // Check if the neighbor is valid and unprocessed
-                    if (isValidCell(neighborCell, rows, columns) &&
-                        cellHeights[neighborCell.first][neighborCell.second] ==
-                        -1) {
-                        cellHeights[neighborCell.first][neighborCell.second] =
-                            heightOfNextLayer;
-                        cellQueue.push(neighborCell);
-                    }
-                }
-            }
-            heightOfNextLayer++;  // Increment height for the next layer
-        }
-
-        return cellHeights;
+        return true;
     }
 
-private:
-    // Function to check if a cell is within the grid boundaries
-    bool isValidCell(pair<int, int> cell, int rows, int columns) {
-        return cell.first >= 0 && cell.second >= 0 && cell.first < rows &&
-            cell.second < columns;
+    vector<vector<int>> highestPeak(vector<vector<int>>& isWater) {
+
+        m_ = isWater.size(), n_ = isWater[0].size();
+
+        vector<vector<int>> dir = {
+            {-1,0},
+            {0,1},
+            {1,0},
+            {0,-1},
+        };
+
+        vector<vector<int>> height(m_, vector<int>(n_, 0));
+        vector<vector<int>> visited(m_, vector<int>(n_, 0));
+
+        queue<pair<int, int>> q;
+
+        for (int i = 0; i < m_; i++) {
+            for (int j = 0; j < n_; j++) {
+                if (isWater[i][j]) {
+                    visited[i][j] = 1;
+                    q.push({ i,j });
+                }
+            }
+        }
+
+        //parallel-bfs
+        pair<int, int> p;
+        int x, y, X, Y;
+
+        while (!q.empty()) {
+            p = q.front();
+            x = p.first;
+            y = p.second;
+
+            q.pop();
+
+            for (int i = 0; i < 4; i++) {
+                X = x + dir[i][0];
+                Y = y + dir[i][1];
+
+                if (isValid(X, Y) && !visited[X][Y]) {
+                    visited[X][Y] = 1;
+                    q.push({ X,Y });
+                    height[X][Y] = height[x][y] + 1;
+                }
+
+            }
+        }
+
+        return height;
     }
 };
