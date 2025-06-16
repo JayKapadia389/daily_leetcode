@@ -1,4 +1,4 @@
-max-difference-you-can-get-from-changing-an-integerclass Solution {
+Solution {
 public:
     int maxDiff(int num) {
 
