@@ -1,0 +1,20 @@
+class Solution {
+public:
+    int findLucky(vector<int>& arr) {
+
+        map<int,int> m ; 
+
+        for(auto num : arr)
+            ++m[num] ; 
+        
+        auto it = m.end(); --it;
+
+        for(; it != m.begin() ; --it){
+            if(it->first == it->second){
+                return it->first ; 
+            }
+        }
+
+        return it->first == it->second ?  it->first : -1 ; 
+    }
+};
