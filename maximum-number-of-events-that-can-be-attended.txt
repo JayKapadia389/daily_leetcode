@@ -1,0 +1,47 @@
+//backlog
+
+class Solution {
+public:
+    int maxEvents(vector<vector<int>>& events) {
+    // Step 1: Sort events by their start day
+    sort(events.begin(), events.end());
+
+    // Min-heap to store end days of active events
+    priority_queue<int, vector<int>, greater<int>> minHeap;
+
+    int day = 1;               // Current day
+    int i = 0;                 // Index in the events list
+    int n = events.size();     
+    int attended = 0;          // Count of events attended
+
+    // Continue until all events are processed and no more active events remain
+    while (i < n || !minHeap.empty()) {
+        // If heap is empty, skip to the start of the next event
+        if (minHeap.empty()) {
+            day = events[i][0];
+        }
+
+        // Add all events that start on this day
+        while (i < n && events[i][0] <= day) {
+            minHeap.push(events[i][1]); // Push end day
+            i++;
+        }
+
+        // Remove events that already expired
+        while (!minHeap.empty() && minHeap.top() < day) {
+            minHeap.pop();
+        }
+
+        // Attend the event that ends earliest
+        if (!minHeap.empty()) {
+            minHeap.pop();
+            attended++;
+        }
+
+        day++; // Move to the next day
+    }
+
+    return attended;
+}
+
+};
