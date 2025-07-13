@@ -1,0 +1,77 @@
+// Solution accepted in the first try!! But the code is very messy.
+
+class Solution {
+public:
+
+    class UnionFind {
+
+        private:
+        vector<int> leader; 
+        unordered_map<int , map<int , bool>> master ; 
+
+        public:
+        UnionFind(int c) : leader(c+1) {
+            for(int i = 1 ; i <= c ; ++i){
+                leader[i] = i ; 
+            }
+        }
+
+        int find(int i){
+            return i == leader[i] ? i : (leader[i] = find(leader[i])); 
+        }
+
+        void merge(int i , int j){
+            leader[find(i)] = leader[find(j)] ; 
+        }
+
+        void insert(int comp , int i){
+            master[comp][i] = 1 ; 
+        }
+
+        void shut(int i){
+            master[find(i)].erase(i) ; 
+        }
+
+        int maintainence(int i){
+
+            if(master[find(i)].empty()){
+                return -1 ; 
+            }
+            else if(master[find(i)].find(i) == master[find(i)].end()){
+                return (master[find(i)].begin())->first ; 
+            }
+            else{
+                return i ; 
+            }
+
+        }
+
+    };
+
+    vector<int> processQueries(int c, vector<vector<int>>& connections, vector<vector<int>>& queries) {
+        
+        UnionFind uf(c) ; 
+
+        for(auto con : connections){
+            uf.merge(con[0] , con[1]) ; 
+        }
+
+        for(int i = 1 ; i <= c; ++i){
+            uf.insert(uf.find(i) , i) ; 
+        }
+
+        vector<int> ans ; 
+
+        for(auto query : queries){
+            if(query[0] == 1){
+                ans.push_back(uf.maintainence(query[1])) ;
+            }
+            else{
+                uf.shut(query[1]) ; 
+            }
+        }
+
+        return ans ; 
+
+    }
+};
