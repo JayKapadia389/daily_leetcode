@@ -1,0 +1,18 @@
+class Solution {
+public:
+    int maxSum(vector<int>& nums) {
+        unordered_set<int> s;
+        int ans = 0, mx = INT_MIN;
+        for(auto i : nums){
+            mx = max(mx, i);
+            if(i >= 0 && s.find(i) == s.end()){
+                s.insert(i);
+                ans+=i;
+            }
+        } 
+        if(mx < 0){
+            return mx;
+        }
+        return ans;
+    }
+};
