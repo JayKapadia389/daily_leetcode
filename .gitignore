@@ -1,2 +1,3 @@
 SetDSFromJSON.cpp
-.vscode/settings.json
+.vscode/
+*.exe
