@@ -8,16 +8,18 @@ public:
         vector<vector<int>> d2_prefix(m, vector<int>(n));
 
         // h_prefix
-        for(int i = 0; i < m; ++i){
-            for(int j = 0; j < n; ++j){
-                h_prefix[i][j] = (j == 0)? grid[i][j] : h_prefix[i][j-1] + grid[i][j];
+        for (int i = 0; i < m; ++i) {
+            h_prefix[i][0] = grid[i][0];
+            for (int j = 1; j < n; ++j) {
+                h_prefix[i][j] = h_prefix[i][j - 1] + grid[i][j];
             }
         }
 
-        // h_prefix
-        for(int j = 0; j < n; ++j){
-            for(int i = 0; i < m; ++i){
-                v_prefix[i][j] = (i == 0)? grid[i][j] : v_prefix[i-1][j] + grid[i][j];
+        // v_prefix
+        for (int j = 0; j < n; ++j) {
+            v_prefix[0][j] = grid[0][j];
+            for (int i = 1; i < m; ++i) {
+                v_prefix[i][j] = v_prefix[i - 1][j] + grid[i][j];
             }
         }
 
@@ -35,8 +37,7 @@ public:
             }
         }
 
-        int k = min(m, n);
-        for(;k > 1; --k){
+        for(int k = min(m, n) ;k >= 2; --k){
             for(int i = 0; (i+k) <= m; ++i){
                 for(int j = 0; (j+k) <= n; ++j){
                     int sum = -1;
