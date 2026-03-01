@@ -5,18 +5,18 @@ public:
         int m = 1e9 + 7;
 
         for(int i = 1; i <= n; ++i){
-            stack<bool> s;
+            vector<bool> s;
             int num = i;
 
             while(num > 0){
-                s.push(num & 1);
+                s.push_back(num & 1);
                 num >>= 1;
             }
 
             while(!s.empty()){
                 ans <<= 1;
-                ans += s.top();
-                s.pop();
+                ans += s.back();
+                s.pop_back();
                 ans %= m;
             }
         }
